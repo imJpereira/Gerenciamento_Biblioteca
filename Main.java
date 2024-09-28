@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -5,24 +8,23 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-
         String menu = """
-            SISTEMA DE GERENCIAMENTO BIBLIOTECA
-            Escolha uma das opções:
-            1- Adicionar novo livro;
-            2- Listar todos os livros;
-            3- Pesquisar livro;
-            4- Remover livro;
-            0- Sair;
-            """;
-
-        int opcao; 
             
+        SISTEMA DE GERENCIAMENTO BIBLIOTECA
+        Escolha uma das opções:
+        1- Adicionar novo livro;
+        2- Listar todos os livros;
+        3- Pesquisar livro;
+        4- Remover livro;
+        0- Sair;
+        """;
+
+        int opcao;
+    
         do {
+           limparTela();
             System.out.println(menu);
-            System.out.print("Sua escolha: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine(); 
+            opcao = inputNumInteiro(); 
 
             switch (opcao) {
                 case 0:                   
@@ -32,15 +34,16 @@ public class Main {
                     adicionar();
                     break;
                 case 2: //Mostra todos 
-                    listar();
+                    pesquisarTodos();
                     break;
-                case 3:
-                    //biblio.pesquisarPorTitulo(menu);
+                case 3: //Pesquisa por título
+                    pesquisarPorTitulo();
                     break;
                 case 4:
-                    //biblio.removePorTitulo(menu);
+                    removerLivro();
                     break;
                 default:
+                    System.out.println("Opção inválida! ");
                     break;
             }
         
@@ -48,7 +51,32 @@ public class Main {
         
         scanner.close();
     }
+    
+    private static void limparTela() {
+        System.out.println("\033[H\033[2J");
+    }
 
+    private static void travarAcao() {
+        System.out.print("Clique qualquer tecla para continuar: ");
+        scanner.nextLine();
+    }
+
+    private static int inputNumInteiro() {
+        int valorNumerico = 0;
+        Boolean inputNumerico = false;
+        
+        while(!inputNumerico) {
+            System.out.print("Sua escolha: ");
+            String inputStr = scanner.nextLine();
+            try {
+                valorNumerico = Integer.parseInt(inputStr);
+                inputNumerico = true;
+            } catch (Exception e) {
+                System.out.println("Por favor, digite um número inteiro! "+ e.getMessage());
+            }
+        }
+        return valorNumerico;
+    }
 
     private static void adicionar() {
         Livro novoLivro = new Livro();
@@ -66,12 +94,41 @@ public class Main {
         novoLivro.setPaginas(scanner.nextInt());
         scanner.nextLine();
 
-        biblio.adicionarLivro(novoLivro);
+        try {
+            biblio.adicionarLivro(novoLivro);
+           limparTela();
+            System.out.println("Livro adicionado com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao adicionar livro: \n"+ e.getMessage());
+        }
+
+        travarAcao();        
     }
 
-    private static void listar() {
+    private static void pesquisarTodos() {
         var livros = biblio.pesquisarTodos();
+        livros.sort(Comparator.comparing(Livro::getTitulo)); //Ordem alfabética 
+        listarLivros(livros);
+        travarAcao();
+    }
 
+    private static void pesquisarPorTitulo() {
+        limparTela();
+        System.out.print("Título do livro: ");
+        String titulo = scanner.nextLine();
+        List<Livro> livrosEncontrados = new ArrayList<>();
+
+        try {
+             livrosEncontrados = biblio.pesquisarPorTitulo(titulo);
+        } catch (Exception e) {
+            System.out.println("Erro ao procurar livro: " + e.getMessage());
+        }
+        listarLivros(livrosEncontrados);
+        travarAcao();
+    }
+
+    private static void listarLivros(List<Livro> livros) {
+        limparTela();
         System.out.println("Lista de livros: ");
         for (Livro livro : livros) {
             System.out.println("====================================");
@@ -84,5 +141,42 @@ public class Main {
         }
         System.out.println("====================================");
     }
+
+    private static void removerLivro() {
+        limparTela();
+        pesquisarTodos();
+        System.out.print("Título do livro: ");
+        String titulo = scanner.nextLine();
+        
+        Boolean removidoComSucesso = false;
+
+        try {
+            removidoComSucesso = biblio.removerPorTitulo(titulo);
+        } catch (Exception e) {
+            System.out.println("Não foi possível remover o livro "+ e.getMessage());
+        }
+
+        if (removidoComSucesso) {
+            System.out.println("Livro removido com sucesso!");
+        } else {
+            System.out.println("Livro não encontrado!");
+            System.out.println("================");
+            System.out.println("""
+                    Remover outro livro [0] 
+                    Sair [1]
+                    """);
+            int opcao = inputNumInteiro();
+            switch (opcao) {
+                case 0:
+                    removerLivro();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        travarAcao(); 
+    }
+
 
 }

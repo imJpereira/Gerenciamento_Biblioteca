@@ -5,26 +5,39 @@ public class Biblioteca {
     //Pesquisar sobre List e ArrayList
     private List<Livro> acervo = new ArrayList<>();
 
-    public void adicionarLivro(Livro novoLivro) {
+    public void adicionarLivro(Livro novoLivro) throws Exception {
+        if (novoLivro.getTitulo() == null || novoLivro.getTitulo().isEmpty()) {
+            throw new Exception("Não é permitido cadastra livro sem título");
+        } 
+
+        for (Livro livro : acervo) {
+            if (livro.getTitulo().equalsIgnoreCase(novoLivro.getTitulo())) {
+                throw new Exception("Já existe um livro com esse nome cadastrado");
+            }
+        }
+        
         acervo.add(novoLivro);
     }
 
-    public Livro pesquisarPorTitulo(String titulo) {
+    public List<Livro> pesquisarPorTitulo(String titulo) {
+        List<Livro> livrosEncontrados = new ArrayList<>();
         for (Livro livro : acervo) {
-            if (livro.getTitulo().equals(titulo)) {
-                return livro;
+            if (livro.getTitulo().toLowerCase().contains(titulo.toLowerCase())) {
+                livrosEncontrados.add(livro);
             }
         }
 
-        return null;
+        return livrosEncontrados;
     }
 
-    public void removePorTitulo(String titulo) {
-        Livro livroRemove = pesquisarPorTitulo(titulo);
-
-        if (livroRemove != null) {
-            acervo.remove(livroRemove);
+    public Boolean removerPorTitulo(String titulo) {
+        for (Livro livro : acervo) {
+            if (livro.getTitulo() == titulo) {
+                acervo.remove(livro);
+                return true;
+            }
         }
+        return false;
     }
 
     public List<Livro> pesquisarTodos() {

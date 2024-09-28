@@ -3,17 +3,6 @@ public class Livro {
     private String autor;
     private int anoPublicacao;
     private int paginas;
-    
-    public Livro(String titulo, String autor, int anoPublicacao, int paginas) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.anoPublicacao = anoPublicacao;
-        this.paginas = paginas;
-    }
-
-    public Livro() {
-        
-    }
 
     public String getTitulo() {
         return titulo;
