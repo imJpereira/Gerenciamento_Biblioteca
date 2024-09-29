@@ -53,7 +53,7 @@ public class Biblioteca {
 
     public Boolean removerPorTitulo(String titulo) {
         for (Livro livro : acervo) {
-            if (livro.getTitulo() == titulo) {
+            if (livro.getTitulo().equalsIgnoreCase(titulo)) {
                 acervo.remove(livro);
                 return true;
             }

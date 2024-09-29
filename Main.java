@@ -22,9 +22,9 @@ public class Main {
         int opcao;
     
         do {
-           limparTela();
+            limparTela();
             System.out.println(menu);
-            opcao = inputNumInteiro(); 
+            opcao = inputNumInteiro("Sua escolha: "); 
 
             switch (opcao) {
                 case 0:                   
@@ -57,16 +57,16 @@ public class Main {
     }
 
     private static void travarAcao() {
-        System.out.print("Clique qualquer tecla para continuar: ");
+        System.out.print("Clique qualquer tecla para prosseguir: ");
         scanner.nextLine();
     }
 
-    private static int inputNumInteiro() {
+    private static int inputNumInteiro(String mensagem) {
         int valorNumerico = 0;
         Boolean inputNumerico = false;
         
         while(!inputNumerico) {
-            System.out.print("Sua escolha: ");
+            System.out.print(mensagem);
             String inputStr = scanner.nextLine();
             try {
                 valorNumerico = Integer.parseInt(inputStr);
@@ -79,6 +79,7 @@ public class Main {
     }
 
     private static void adicionar() {
+        limparTela();
         Livro novoLivro = new Livro();
         System.out.print("Informe o tíulo do livro: ");
         novoLivro.setTitulo(scanner.nextLine());
@@ -86,13 +87,8 @@ public class Main {
         System.out.print("Informe o autor do livro: ");
         novoLivro.setAutor(scanner.nextLine());
 
-        System.out.print("Informe o ano de publicação do livro: ");
-        novoLivro.setAnoPublicacao(scanner.nextInt());
-        scanner.nextLine();
-
-        System.out.print("Informe o número de páginas do livro: ");
-        novoLivro.setPaginas(scanner.nextInt());
-        scanner.nextLine();
+        novoLivro.setAnoPublicacao(inputNumInteiro("Informe o ano de publicação do livro: "));
+        novoLivro.setPaginas(inputNumInteiro("Informe o número de páginas do livro: "));
 
         try {
             biblio.adicionarLivro(novoLivro);
@@ -109,7 +105,6 @@ public class Main {
         var livros = biblio.pesquisarTodos();
         livros.sort(Comparator.comparing(Livro::getTitulo)); //Ordem alfabética 
         listarLivros(livros);
-        travarAcao();
     }
 
     private static void pesquisarPorTitulo() {
@@ -124,7 +119,6 @@ public class Main {
             System.out.println("Erro ao procurar livro: " + e.getMessage());
         }
         listarLivros(livrosEncontrados);
-        travarAcao();
     }
 
     private static void listarLivros(List<Livro> livros) {
@@ -140,6 +134,7 @@ public class Main {
                     """, livro.getTitulo(), livro.getAutor(), livro.getAnoPublicacao(), livro.getPaginas());
         }
         System.out.println("====================================");
+        travarAcao();
     }
 
     private static void removerLivro() {
@@ -150,6 +145,7 @@ public class Main {
         
         Boolean removidoComSucesso = false;
 
+        limparTela();
         try {
             removidoComSucesso = biblio.removerPorTitulo(titulo);
         } catch (Exception e) {
@@ -160,23 +156,22 @@ public class Main {
             System.out.println("Livro removido com sucesso!");
         } else {
             System.out.println("Livro não encontrado!");
-            System.out.println("================");
-            System.out.println("""
-                    Remover outro livro [0] 
-                    Sair [1]
-                    """);
-            int opcao = inputNumInteiro();
-            switch (opcao) {
-                case 0:
-                    removerLivro();
-                    break;
-                default:
-                    break;
-            }
         }
-
-        travarAcao(); 
+        
+        System.out.println("================");
+        System.out.println("""
+            [0] Remover outro livro 
+            [1] Voltar para o menu
+                """);
+        int opcao = inputNumInteiro("Sua escolha: ");
+        switch (opcao) {
+            case 0:
+                removerLivro();
+                break;
+            default:
+                break;
+        
+        }
     }
-
 
 }
