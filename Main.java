@@ -34,7 +34,7 @@ public class Main {
                     adicionar();
                     break;
                 case 2: //Mostra todos 
-                    pesquisarTodos();
+                    pesquisarTodos(true);
                     break;
                 case 3: //Pesquisa por título
                     pesquisarPorTitulo();
@@ -101,10 +101,11 @@ public class Main {
         travarAcao();        
     }
 
-    private static void pesquisarTodos() {
+    private static void pesquisarTodos(Boolean travarAcao) {
         var livros = biblio.pesquisarTodos();
         livros.sort(Comparator.comparing(Livro::getTitulo)); //Ordem alfabética 
         listarLivros(livros);
+        if (travarAcao) { travarAcao(); }
     }
 
     private static void pesquisarPorTitulo() {
@@ -134,12 +135,11 @@ public class Main {
                     """, livro.getTitulo(), livro.getAutor(), livro.getAnoPublicacao(), livro.getPaginas());
         }
         System.out.println("====================================");
-        travarAcao();
     }
 
     private static void removerLivro() {
         limparTela();
-        pesquisarTodos();
+        pesquisarTodos(false);
         System.out.print("Título do livro: ");
         String titulo = scanner.nextLine();
         
